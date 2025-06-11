@@ -38,6 +38,8 @@ try:
     IB_AVAILABLE = True
 except ImportError:
     IB_AVAILABLE = False
+    OrderId = int  # Fallback type for type hints
+    TickerId = int  # Fallback type for type hints
     print("Warning: Interactive Brokers API not available. Install with: pip install ibapi")
 
 
@@ -90,17 +92,16 @@ class IBWrapper(EWrapper):
         self.broker = broker_instance
         self.logger = logging.getLogger(__name__)
     
-    def error(self, reqId: TickerId, errorCode: int, errorString: str):
+    def error(self, reqId: int, errorCode: int, errorString: str):
         """Handle error messages"""
         self.logger.error(f"IB Error {errorCode}: {errorString} (ReqId: {reqId})")
         self.broker.last_error = {'code': errorCode, 'message': errorString, 'reqId': reqId}
     
-    def connectAck(self):
-        """Connection acknowledgment"""
+    def connectAck(self):        """Connection acknowledgment"""
         self.logger.info("IB Connection acknowledged")
         self.broker.is_connected = True
     
-    def nextValidId(self, orderId: OrderId):
+    def nextValidId(self, orderId: int):
         """Receive next valid order ID"""
         self.broker.next_order_id = orderId
         self.logger.info(f"Next valid order ID: {orderId}")
@@ -135,14 +136,13 @@ class IBWrapper(EWrapper):
         
         self.broker.positions[f"{contract.symbol}_{contract.exchange}"] = position_data
     
-    def orderStatus(self, orderId: OrderId, status: str, filled: float,
+    def orderStatus(self, orderId: int, status: str, filled: float,
                    remaining: float, avgFillPrice: float, permId: int,
                    parentId: int, lastFillPrice: float, clientId: int, whyHeld: str):
         """Order status updates"""
         order_data = {
             'orderId': orderId,
-            'status': status,
-            'filled': filled,
+            'status': status,            'filled': filled,
             'remaining': remaining,
             'avgFillPrice': avgFillPrice,
             'lastFillPrice': lastFillPrice,
@@ -152,13 +152,12 @@ class IBWrapper(EWrapper):
         self.broker.order_status[orderId] = order_data
         self.logger.info(f"Order {orderId} status: {status}")
     
-    def openOrder(self, orderId: OrderId, contract: Contract, order: Order, orderState):
+    def openOrder(self, orderId: int, contract: Contract, order: Order, orderState):
         """Open order details"""
         order_data = {
             'orderId': orderId,
             'contract': contract,
-            'order': order,
-            'orderState': orderState
+            'order': order,            'orderState': orderState
         }
         
         self.broker.open_orders[orderId] = order_data
@@ -181,7 +180,7 @@ class IBWrapper(EWrapper):
         
         self.broker.executions[execution.execId] = exec_data
     
-    def tickPrice(self, reqId: TickerId, tickType, price: float, attrib):
+    def tickPrice(self, reqId: int, tickType, price: float, attrib):
         """Market data price ticks"""
         if reqId not in self.broker.market_data:
             self.broker.market_data[reqId] = {}
@@ -195,10 +194,9 @@ class IBWrapper(EWrapper):
             9: 'close'
         }
         
-        if tickType in tick_types:
-            self.broker.market_data[reqId][tick_types[tickType]] = price
+        if tickType in tick_types:            self.broker.market_data[reqId][tick_types[tickType]] = price
     
-    def tickSize(self, reqId: TickerId, tickType, size: int):
+    def tickSize(self, reqId: int, tickType, size: int):
         """Market data size ticks"""
         if reqId not in self.broker.market_data:
             self.broker.market_data[reqId] = {}
