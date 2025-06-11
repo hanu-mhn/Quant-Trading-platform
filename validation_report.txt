@@ -1,0 +1,102 @@
+================================================================================
+QUANTITATIVE TRADING PLATFORM VALIDATION REPORT
+================================================================================
+Validation completed at: 2025-06-11 03:43:11
+Project root: D:\QUANT\QT_python\quant-trading-platform
+
+❌ VALIDATION FAILED - 7 errors, 1 warnings
+
+📋 ENVIRONMENT
+----------------------------------------
+  python_version: ✓ Python 3.13.3
+  system_resources: {'memory_gb': '✓ 11.9 GB RAM', 'disk_gb': '✓ 60.3 GB free', 'cpu_count': '✓ 4 CPU cores'}
+  docker: ✗ Docker unavailable
+  docker_compose: ✗ Docker Compose unavailable
+
+📋 PYTHON DEPENDENCIES
+----------------------------------------
+  total_packages: 74
+  pandas: ✓ pandas
+  numpy: ✓ numpy
+  scipy: ✓ scipy
+  scikit-learn: ✓ scikit-learn
+  fastapi: ✓ fastapi
+  uvicorn: ✓ uvicorn
+  streamlit: ✓ streamlit
+  psycopg2-binary: ✓ psycopg2-binary
+  redis: ✓ redis
+  sqlalchemy: ✓ sqlalchemy
+  pytest: ✓ pytest
+  docker: ✓ docker
+  prometheus-client: ✓ prometheus-client
+
+📋 FILE STRUCTURE
+----------------------------------------
+  docker-compose.yml: ✓ docker-compose.yml
+  requirements.txt: ✓ requirements.txt
+  Dockerfile: ✓ Dockerfile
+  Dockerfile.dashboard: ✓ Dockerfile.dashboard
+  src/: ✓ src/
+  tests/: ✓ tests/
+  scripts/: ✓ scripts/
+  monitoring/: ✓ monitoring/
+  nginx/: ✓ nginx/
+  src/api/api_server.py: ✓ src/api/api_server.py
+  src/dashboard/trading_dashboard.py: ✓ src/dashboard/trading_dashboard.py
+  src/trading/paper_trading.py: ✓ src/trading/paper_trading.py
+  scripts/init_db.sql: ✓ scripts/init_db.sql
+  nginx/nginx.conf: ✓ nginx/nginx.conf
+  monitoring/prometheus/prometheus.yml: ✓ monitoring/prometheus/prometheus.yml
+
+📋 CONFIGURATION FILES
+----------------------------------------
+  docker_compose: ✓ Valid docker-compose.yml
+  prometheus_config: ✓ Valid prometheus.yml
+  nginx_config: ✓ Valid nginx.conf
+
+📋 PYTHON MODULES
+----------------------------------------
+  API Server: ✗ API Server - attempted relative import with no known parent pac...
+  Dashboard: ✓ Dashboard
+  Paper Trading: ✗ Paper Trading - attempted relative import with no known parent pac...
+  Logging System: ✓ Logging System
+  IB Broker: ✗ IB Broker - attempted relative import with no known parent pac...
+  Test Suite: ✓ Test Suite
+
+📋 DATABASE SETUP
+----------------------------------------
+  init_script: ✓ Complete database schema
+
+📋 TEST SUITE
+----------------------------------------
+  test_execution: ⚠ 0 tests failed
+
+📋 DOCKER BUILD
+----------------------------------------
+  main_app_build: ✗ Error: [WinError 2] The system cannot find the file specified
+  dashboard_build: ✗ Error: [WinError 2] The system cannot find the file specified
+
+❌ ERRORS
+----------------------------------------
+  • Docker not found or not working
+  • Docker Compose not found or not working
+  • Error importing src.api.api_server: attempted relative import with no known parent package
+  • Error importing src.trading.paper_trading: attempted relative import with no known parent package
+  • Error importing src.brokers.interactive_brokers.ib_broker: attempted relative import with no known parent package
+  • Docker build error: [WinError 2] The system cannot find the file specified
+  • Dashboard Docker build error: [WinError 2] The system cannot find the file specified
+
+⚠️  WARNINGS
+----------------------------------------
+  • 0 tests failed
+
+💡 RECOMMENDATIONS
+----------------------------------------
+  • Fix all errors before deploying to production
+  • Review and address warnings for optimal performance
+  • Run integration tests after deployment
+  • Monitor system performance during initial operation
+  • Set up automated backups and monitoring alerts
+  • Review security configurations for production use
+
+================================================================================

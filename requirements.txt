@@ -1,0 +1,133 @@
+# Quantitative Trading Platform Requirements
+# Compatible with Python 3.13
+
+# ====== CORE DATA ANALYSIS ======
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# ====== TECHNICAL ANALYSIS ======
+TA-Lib>=0.4.24
+ta>=0.10.2
+
+# ====== VISUALIZATION ======
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.14.0
+
+# ====== WEB DASHBOARD ======
+streamlit>=1.28.0
+dash>=2.14.0
+dash-bootstrap-components>=1.5.0
+
+# ====== MACHINE LEARNING ======
+scikit-learn>=1.3.0
+statsmodels>=0.14.0
+xgboost>=1.7.0
+lightgbm>=4.0.0
+
+# ====== WEB SCRAPING AND DATA SOURCES ======
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+selenium>=4.15.0
+httpx>=0.25.0
+
+# ====== NSE/BSE DATA SOURCES ======
+nsetools>=1.0.11
+yfinance>=0.2.18
+
+# ====== DATABASE AND STORAGE ======
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0  # PostgreSQL adapter
+redis>=4.6.0
+# sqlite3 is included with Python - no need to install
+
+# ====== CONFIGURATION AND UTILITIES ======
+pyyaml>=6.0.1  # Modern PyYAML version
+python-dotenv>=1.0.0
+configparser>=5.3.0
+pydantic>=2.0.0
+
+# ====== EXCEL SUPPORT ======
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+
+# ====== TESTING ======
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+
+# ====== BROKER API CLIENTS ======
+kiteconnect>=4.2.0  # Zerodha KiteConnect
+ibapi>=9.81.0,<10.0.0  # Interactive Brokers - fix version conflict
+
+# ====== ASYNC SUPPORT ======
+aiohttp>=3.8.0
+websockets>=11.0
+uvloop>=0.19.0; sys_platform != "win32"  # Fast event loop (Unix only)
+
+# ====== LOGGING AND MONITORING ======
+loguru>=0.7.0
+psutil>=5.9.0  # System monitoring
+prometheus-client>=0.18.0
+
+# ====== API FRAMEWORK ======
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+gunicorn>=21.2.0; sys_platform != "win32"
+
+# ====== JUPYTER NOTEBOOK SUPPORT ======
+jupyter>=1.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.0.0
+notebook>=7.0.0
+
+# ====== PERFORMANCE OPTIMIZATION ======
+numba>=0.58.0
+cython>=3.0.0
+
+# ====== DATE AND TIME HANDLING ======
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# ====== DATA VALIDATION ======
+marshmallow>=3.20.0
+cerberus>=1.3.4
+
+# ====== PROGRESS BARS ======
+tqdm>=4.66.0
+
+# ====== CRYPTOGRAPHY FOR SECURE CONNECTIONS ======
+cryptography>=41.0.0
+
+# ====== MESSAGE QUEUING ======
+celery>=5.3.0
+kombu>=5.3.0
+
+# ====== NETWORKING ======
+websocket-client>=1.6.0
+
+# ====== DEVELOPMENT TOOLS ======
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+pre-commit>=3.0.0
+
+# ====== DEPLOYMENT ======
+docker>=6.1.0
+# Note: Use 'docker compose' CLI command instead of legacy docker-compose
+# No additional package needed - included with modern Docker installations
+
+# ====== ADDITIONAL UTILITIES ======
+click>=8.1.0  # Command line interface
+rich>=13.0.0  # Rich text and beautiful formatting
+typer>=0.9.0  # Modern CLI framework
+
+# ====== ADDITIONAL DEPENDENCIES FOR PRODUCTION ======
+python-multipart>=0.0.6  # For FastAPI file uploads
+python-jose[cryptography]>=3.3.0  # For JWT tokens
+passlib[bcrypt]>=1.7.4  # For password hashing
+email-validator>=2.0.0  # For email validation
+jinja2>=3.1.0  # Template engine
+aiofiles>=23.0.0  # Async file operations
