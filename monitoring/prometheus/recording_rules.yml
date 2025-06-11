@@ -1,0 +1,185 @@
+# Recording rules for the quantitative trading platform
+# These rules pre-compute frequently used queries to improve performance
+
+groups:
+  - name: trading_platform_recording_rules
+    interval: 30s
+    rules:
+      # System Performance Recording Rules
+      - record: instance:cpu_usage_percent:rate5m
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      - record: instance:memory_usage_percent
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100
+
+      - record: instance:disk_usage_percent
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100
+
+      - record: instance:network_receive_bytes:rate5m
+        expr: rate(node_network_receive_bytes_total[5m])
+
+      - record: instance:network_transmit_bytes:rate5m
+        expr: rate(node_network_transmit_bytes_total[5m])
+
+      # Application Performance Recording Rules
+      - record: trading_api:request_rate:rate5m
+        expr: rate(http_requests_total{job="trading-api"}[5m])
+
+      - record: trading_api:error_rate:rate5m
+        expr: rate(http_requests_total{job="trading-api",status=~"5.."}[5m])
+
+      - record: trading_api:latency_p95:rate5m
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="trading-api"}[5m]))
+
+      - record: trading_api:latency_p99:rate5m
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job="trading-api"}[5m]))
+
+      # Database Performance Recording Rules
+      - record: postgres:connection_usage_percent
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100
+
+      - record: postgres:query_rate:rate5m
+        expr: rate(pg_stat_database_xact_commit[5m]) + rate(pg_stat_database_xact_rollback[5m])
+
+      - record: postgres:cache_hit_ratio
+        expr: pg_stat_database_blks_hit / (pg_stat_database_blks_hit + pg_stat_database_blks_read) * 100
+
+      - record: redis:memory_usage_percent
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100
+
+      - record: redis:keyspace_hit_rate
+        expr: rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100
+
+      # Trading Specific Recording Rules
+      - record: trading:order_rate:rate5m
+        expr: rate(trading_orders_total[5m])
+
+      - record: trading:order_fill_rate:rate5m
+        expr: rate(trading_orders_filled_total[5m])
+
+      - record: trading:order_rejection_rate:rate5m
+        expr: rate(trading_orders_rejected_total[5m])
+
+      - record: trading:order_success_rate_percent
+        expr: rate(trading_orders_filled_total[5m]) / rate(trading_orders_total[5m]) * 100
+
+      - record: trading:pnl_total_1h
+        expr: increase(trading_portfolio_pnl_total[1h])
+
+      - record: trading:pnl_total_1d
+        expr: increase(trading_portfolio_pnl_total[1d])
+
+      - record: trading:volume_traded:rate1h
+        expr: rate(trading_volume_total[1h])
+
+      - record: trading:commission_total:rate1h
+        expr: rate(trading_commission_total[1h])
+
+      # Market Data Recording Rules
+      - record: market_data:update_rate:rate5m
+        expr: rate(trading_market_data_updates_total[5m])
+
+      - record: market_data:latency_p95:rate5m
+        expr: histogram_quantile(0.95, rate(trading_market_data_latency_seconds_bucket[5m]))
+
+      - record: market_data:gap_count:rate5m
+        expr: rate(trading_market_data_gaps_total[5m])
+
+      # Risk Management Recording Rules
+      - record: portfolio:total_value
+        expr: sum(trading_position_market_value) + trading_account_cash_balance
+
+      - record: portfolio:daily_pnl
+        expr: portfolio:total_value - portfolio:total_value offset 1d
+
+      - record: portfolio:max_drawdown_1d
+        expr: (max_over_time(portfolio:total_value[1d]) - portfolio:total_value) / max_over_time(portfolio:total_value[1d]) * 100
+
+      - record: portfolio:max_drawdown_1w
+        expr: (max_over_time(portfolio:total_value[7d]) - portfolio:total_value) / max_over_time(portfolio:total_value[7d]) * 100
+
+      - record: portfolio:volatility_1d
+        expr: stddev_over_time(portfolio:daily_pnl[30d])
+
+      - record: portfolio:sharpe_ratio_1m
+        expr: avg_over_time(portfolio:daily_pnl[30d]) / stddev_over_time(portfolio:daily_pnl[30d]) * sqrt(252)
+
+      # Strategy Performance Recording Rules
+      - record: strategy:total_pnl
+        expr: sum by(strategy) (trading_strategy_pnl_total)
+
+      - record: strategy:win_rate_1d
+        expr: sum by(strategy) (rate(trading_strategy_winning_trades_total[1d])) / sum by(strategy) (rate(trading_strategy_total_trades_total[1d])) * 100
+
+      - record: strategy:avg_trade_pnl_1d
+        expr: sum by(strategy) (rate(trading_strategy_pnl_total[1d])) / sum by(strategy) (rate(trading_strategy_total_trades_total[1d]))
+
+      - record: strategy:max_drawdown_1w
+        expr: max by(strategy) ((max_over_time(trading_strategy_pnl_total[7d]) - trading_strategy_pnl_total) / max_over_time(trading_strategy_pnl_total[7d]) * 100)
+
+      # Container Performance Recording Rules
+      - record: container:cpu_usage_percent
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100
+
+      - record: container:memory_usage_percent
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes * 100
+
+      - record: container:network_receive_bytes:rate5m
+        expr: rate(container_network_receive_bytes_total[5m])
+
+      - record: container:network_transmit_bytes:rate5m
+        expr: rate(container_network_transmit_bytes_total[5m])
+
+      # Aggregated System Health Scores
+      - record: system:health_score
+        expr: |2
+          (
+            (100 - clamp_max(instance:cpu_usage_percent:rate5m, 100)) * 0.3 +
+            (100 - clamp_max(instance:memory_usage_percent, 100)) * 0.3 +
+            (100 - clamp_max(instance:disk_usage_percent, 100)) * 0.2 +
+            (clamp_min(up * 100, 0)) * 0.2
+          )
+
+      - record: application:health_score
+        expr: |2
+          (
+            (clamp_min(up{job="trading-api"} * 100, 0)) * 0.4 +
+            (clamp_min(up{job="trading-dashboard"} * 100, 0)) * 0.2 +
+            (clamp_min(up{job="data-collector"} * 100, 0)) * 0.2 +
+            (100 - clamp_max(trading_api:error_rate:rate5m / trading_api:request_rate:rate5m * 100, 100)) * 0.2
+          )
+
+      - record: trading:health_score
+        expr: |2
+          (
+            (100 - clamp_max(trading:order_rejection_rate:rate5m / trading:order_rate:rate5m * 100, 100)) * 0.3 +
+            (clamp_min(trading_broker_connection_status * 100, 0)) * 0.3 +
+            (100 - clamp_max(abs(portfolio:max_drawdown_1d), 100)) * 0.2 +
+            (100 - clamp_max((time() - trading_market_data_last_update_timestamp) / 300 * 100, 100)) * 0.2
+          )
+
+      # Hourly aggregations for dashboard
+      - record: trading:hourly_pnl
+        expr: increase(trading_portfolio_pnl_total[1h])
+
+      - record: trading:hourly_volume
+        expr: increase(trading_volume_total[1h])
+
+      - record: trading:hourly_trades
+        expr: increase(trading_orders_filled_total[1h])
+
+      - record: trading:hourly_commission
+        expr: increase(trading_commission_total[1h])
+
+      # Daily aggregations for reporting
+      - record: trading:daily_pnl
+        expr: increase(trading_portfolio_pnl_total[1d])
+
+      - record: trading:daily_volume
+        expr: increase(trading_volume_total[1d])
+
+      - record: trading:daily_trades
+        expr: increase(trading_orders_filled_total[1d])
+
+      - record: trading:daily_commission
+        expr: increase(trading_commission_total[1d])

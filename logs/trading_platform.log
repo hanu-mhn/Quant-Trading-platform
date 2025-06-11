@@ -1,0 +1,94 @@
+2025-06-11 03:51:23 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:51:23 | root | INFO | api_server.py:143 | API server initialized successfully
+2025-06-11 03:51:26 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:51:26 | root | INFO | api_server.py:143 | API server initialized successfully
+2025-06-11 03:51:26 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:51:26 | root | INFO | api_server.py:143 | API server initialized successfully
+2025-06-11 03:52:26 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:52:26 | root | INFO | api_server.py:143 | API server initialized successfully
+2025-06-11 03:52:32 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:52:32 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:52:32 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 03:52:32 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 03:52:32 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:52:32 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 03:52:39 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:52:39 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 03:57:27 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 03:57:27 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 03:57:27 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 04:01:15 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 04:01:15 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 04:01:24 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:20:44 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:20:44 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:20:51 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:30:25 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:30:25 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:30:50 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:30:50 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:32:31 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:32:31 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:39:00 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:39:00 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:48:40 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:48:40 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:52:34 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:52:34 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:54:10 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:54:10 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:54:27 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:54:27 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:57:54 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:57:55 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 11:59:33 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 11:59:33 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:03:31 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:03:31 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:14:30 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:14:30 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:14:58 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:14:58 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:15:22 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:15:22 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:15:45 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:15:45 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:16:39 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:16:39 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:19:21 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:19:21 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:23:03 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:23:03 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:25:15 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:25:15 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:25:33 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:25:33 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:30:25 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:30:25 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:31:27 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:31:27 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:31:58 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:31:58 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:32:21 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:32:21 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:34:58 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:34:58 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:35:12 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:35:12 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:35:23 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:35:23 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:38:06 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:38:06 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:38:23 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:38:23 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:40:38 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:40:38 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 12:43:23 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 12:43:23 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 13:02:13 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 13:02:31 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 13:02:31 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 13:05:12 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 13:05:12 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 13:07:03 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 13:07:03 | root | INFO | api_server.py:142 | API server initialized successfully

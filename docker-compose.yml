@@ -1,0 +1,262 @@
+version: '3.8'
+
+# Quantitative Trading Platform - Docker Compose Configuration
+# Copyright © 2025 [Your Name]. All rights reserved.
+# Developer: [Your Name] | Contact: [your.email@domain.com]
+# GitHub: https://github.com/your-github-username/quant-trading-platform
+
+services:
+  # PostgreSQL Database for production data storage
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: trading_platform
+      POSTGRES_USER: trader
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-trading_secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - trading_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trader -d trading_platform"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and message queuing
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - trading_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Main trading application
+  trading_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=trading_platform
+      - DB_USER=trader
+      - DB_PASSWORD=${DB_PASSWORD:-trading_secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ENVIRONMENT=production
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+  # Streamlit Dashboard
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=trading_platform
+      - DB_USER=trader
+      - DB_PASSWORD=${DB_PASSWORD:-trading_secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - database
+      - redis
+      - trading_app
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+  # API Server
+  api_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=trading_platform
+      - DB_USER=trader
+      - DB_PASSWORD=${DB_PASSWORD:-trading_secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - database
+      - redis
+    networks:
+      - trading_network
+    command: python src/api/api_server.py
+    restart: unless-stopped
+
+  # Data Collection Service
+  data_collector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=trading_platform
+      - DB_USER=trader
+      - DB_PASSWORD=${DB_PASSWORD:-trading_secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - database
+      - redis
+    networks:
+      - trading_network
+    command: python src/data/collectors/nse_ticker_collector.py
+    restart: unless-stopped
+
+  # Backtesting Service
+  backtesting:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=trading_platform
+      - DB_USER=trader
+      - DB_PASSWORD=${DB_PASSWORD:-trading_secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./results:/app/results
+    depends_on:
+      - database
+      - redis
+    networks:
+      - trading_network
+    command: python src/core/backtester.py
+    restart: "no"
+
+  # Paper Trading Service
+  paper_trading:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=trading_platform
+      - DB_USER=trader
+      - DB_PASSWORD=${DB_PASSWORD:-trading_secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TRADING_MODE=paper
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - database
+      - redis
+    networks:
+      - trading_network
+    command: python src/trading/paper_trading.py
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - dashboard
+      - api_server
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+networks:
+  trading_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  data_volume:
+    driver: local

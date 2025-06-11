@@ -1,0 +1,10 @@
+2025-06-11 03:20:16,097 - INFO - Starting manual backup: backup_manual_20250611_032016
+2025-06-11 03:20:16,098 - INFO - Backing up files...
+2025-06-11 03:20:16,147 - WARNING - Path not found: D:\QUANT\QT_python\quant-trading-platform\models
+2025-06-11 03:20:16,152 - INFO - Backed up 5 files (0.01 MB)
+2025-06-11 03:20:16,156 - INFO - Creating compressed archive...
+2025-06-11 03:20:16,446 - INFO - Backup completed successfully: D:\QUANT\QT_python\quant-trading-platform\backups\backup_manual_20250611_032016.tar.gz
+2025-06-11 03:20:16,465 - INFO - Cleaning up old manual backups...
+2025-06-11 03:20:16,522 - WARNING - Could not parse backup date for backup_manual_20250611_032016.tar.gz: time data '032016' does not match format '%Y%m%d_%H%M%S'
+2025-06-11 03:20:16,551 - INFO - Removed 0 old backups
+2025-06-11 03:20:29,765 - WARNING - Could not parse backup info for backup_manual_20250611_032016.tar.gz: time data '20250611' does not match format '%Y%m%d_%H%M%S'

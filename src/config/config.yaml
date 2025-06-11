@@ -1,0 +1,69 @@
+# Trading Platform Configuration
+# This file contains default settings for the quantitative trading platform
+#
+# Quantitative Trading Platform
+# Copyright © 2025 [Your Name]. All rights reserved.
+# Developer: [Your Name] | Contact: [your.email@domain.com]
+# GitHub: https://github.com/your-github-username/quant-trading-platform
+
+data:
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+  external_data_path: "data/external"
+  default_timeframe: "1D"
+  max_cache_size_mb: 1000
+  cache_expiry_hours: 24
+
+backtest:
+  initial_capital: 100000.0
+  commission_rate: 0.001
+  slippage_rate: 0.0005
+  benchmark_symbol: "NIFTY"
+  start_date: "2020-01-01"
+  end_date: "2024-12-31"
+  rebalance_frequency: "monthly"
+
+live_trading:
+  paper_trading: true
+  max_orders_per_day: 100
+  max_position_size_percent: 10.0
+  risk_limit_percent: 2.0
+  auto_cancel_hours: 24
+  heartbeat_interval_seconds: 30
+
+broker:
+  default_broker: "zerodha"
+  api_key: ""  # Set via environment variable BROKER_API_KEY
+  api_secret: ""  # Set via environment variable BROKER_API_SECRET
+  access_token: ""  # Set via environment variable BROKER_ACCESS_TOKEN
+  base_url: "https://api.kite.trade"
+  timeout_seconds: 30
+  rate_limit_per_second: 10
+
+risk:
+  max_portfolio_risk_percent: 5.0
+  max_single_position_percent: 10.0
+  max_sector_exposure_percent: 25.0
+  stop_loss_percent: 2.0
+  take_profit_percent: 6.0
+  var_confidence_level: 0.95
+  max_drawdown_percent: 10.0
+
+logging:
+  log_level: "INFO"
+  log_file_path: "logs/trading_platform.log"
+  max_file_size_mb: 100
+  backup_count: 5
+  log_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  console_logging: true
+
+notification:
+  email_enabled: false
+  email_smtp_server: "smtp.gmail.com"
+  email_port: 587
+  email_username: ""  # Set via environment variable EMAIL_USERNAME
+  email_password: ""  # Set via environment variable EMAIL_PASSWORD
+  email_to: "hanmanthnayak.95@gmail.com"
+  telegram_enabled: false
+  telegram_bot_token: ""  # Set via environment variable TELEGRAM_BOT_TOKEN
+  telegram_chat_id: ""  # Set via environment variable TELEGRAM_CHAT_ID

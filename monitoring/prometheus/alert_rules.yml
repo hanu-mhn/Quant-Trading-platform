@@ -1,0 +1,271 @@
+# Alert rules for the quantitative trading platform
+groups:
+  - name: trading_platform_alerts
+    rules:
+      # System Health Alerts
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 85% for more than 5 minutes on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 90% for more than 5 minutes on {{ $labels.instance }}"
+
+      - alert: DiskSpaceWarning
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: storage
+        annotations:
+          summary: "Disk space usage warning"
+          description: "Disk usage is above 80% on {{ $labels.device }} ({{ $labels.instance }})"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 95
+        for: 5m
+        labels:
+          severity: critical
+          component: storage
+        annotations:
+          summary: "Critical disk space usage"
+          description: "Disk usage is above 95% on {{ $labels.device }} ({{ $labels.instance }})"
+
+      # Database Alerts
+      - alert: PostgreSQLDown
+        expr: up{job="postgres-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 2 minutes"
+
+      - alert: PostgreSQLTooManyConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "PostgreSQL has too many connections"
+          description: "PostgreSQL connection usage is above 80%"
+
+      - alert: PostgreSQLSlowQueries
+        expr: rate(pg_stat_database_tup_returned[5m]) / rate(pg_stat_database_tup_fetched[5m]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "PostgreSQL slow queries detected"
+          description: "PostgreSQL query performance is degraded"
+
+      # Redis Alerts
+      - alert: RedisDown
+        expr: up{job="redis-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 2 minutes"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Redis high memory usage"
+          description: "Redis memory usage is above 90%"
+
+      # Application Alerts
+      - alert: TradingAPIDown
+        expr: up{job="trading-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "Trading API is down"
+          description: "Trading API service has been down for more than 2 minutes"
+
+      - alert: TradingAPIHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="trading-api"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Trading API high latency"
+          description: "95th percentile latency is above 2 seconds for Trading API"
+
+      - alert: TradingAPIHighErrorRate
+        expr: rate(http_requests_total{job="trading-api",status=~"5.."}[5m]) / rate(http_requests_total{job="trading-api"}[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "Trading API high error rate"
+          description: "Error rate is above 5% for Trading API"
+
+      - alert: DashboardDown
+        expr: up{job="trading-dashboard"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          component: dashboard
+        annotations:
+          summary: "Trading Dashboard is down"
+          description: "Trading Dashboard has been down for more than 5 minutes"
+
+      # Trading Specific Alerts
+      - alert: HighOrderRejectionRate
+        expr: rate(trading_orders_rejected_total[5m]) / rate(trading_orders_total[5m]) * 100 > 10
+        for: 3m
+        labels:
+          severity: warning
+          component: trading
+        annotations:
+          summary: "High order rejection rate"
+          description: "Order rejection rate is above 10%"
+
+      - alert: PortfolioLargeDrawdown
+        expr: trading_portfolio_drawdown_percent > 5
+        for: 1m
+        labels:
+          severity: warning
+          component: trading
+        annotations:
+          summary: "Large portfolio drawdown detected"
+          description: "Portfolio drawdown is above 5%: {{ $value }}%"
+
+      - alert: PortfolioCriticalDrawdown
+        expr: trading_portfolio_drawdown_percent > 10
+        for: 30s
+        labels:
+          severity: critical
+          component: trading
+        annotations:
+          summary: "Critical portfolio drawdown detected"
+          description: "Portfolio drawdown is above 10%: {{ $value }}%"
+
+      - alert: TradingPositionSizeLimit
+        expr: trading_position_size_percent > 20
+        for: 1m
+        labels:
+          severity: warning
+          component: risk
+        annotations:
+          summary: "Position size limit exceeded"
+          description: "Position size is above 20% of portfolio for {{ $labels.symbol }}: {{ $value }}%"
+
+      - alert: MarketDataStale
+        expr: time() - trading_market_data_last_update_timestamp > 300
+        for: 2m
+        labels:
+          severity: critical
+          component: data
+        annotations:
+          summary: "Market data is stale"
+          description: "Market data for {{ $labels.symbol }} hasn't been updated for more than 5 minutes"
+
+      - alert: DataCollectorDown
+        expr: up{job="data-collector"} == 0
+        for: 3m
+        labels:
+          severity: warning
+          component: data
+        annotations:
+          summary: "Data Collector is down"
+          description: "Data collection service has been down for more than 3 minutes"
+
+      # Network and Connectivity Alerts
+      - alert: HighNetworkLatency
+        expr: ping_rtt_ms > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: network
+        annotations:
+          summary: "High network latency detected"
+          description: "Network latency to {{ $labels.target }} is above 100ms"
+
+      - alert: BrokerConnectionLost
+        expr: trading_broker_connection_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: broker
+        annotations:
+          summary: "Broker connection lost"
+          description: "Connection to broker {{ $labels.broker }} has been lost"
+
+      # Container and Infrastructure Alerts
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: container
+        annotations:
+          summary: "Container high CPU usage"
+          description: "Container {{ $labels.name }} CPU usage is above 80%"
+
+      - alert: ContainerHighMemory
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          component: container
+        annotations:
+          summary: "Container high memory usage"
+          description: "Container {{ $labels.name }} memory usage is above 90%"
+
+      - alert: ContainerRestarting
+        expr: rate(container_last_seen[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: container
+        annotations:
+          summary: "Container is restarting frequently"
+          description: "Container {{ $labels.name }} has been restarting frequently"
+
+      # SSL Certificate Alerts (if using HTTPS)
+      - alert: SSLCertificateExpiringSoon
+        expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 30
+        for: 12h
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} expires in less than 30 days"
+
+      - alert: SSLCertificateExpired
+        expr: probe_ssl_earliest_cert_expiry - time() < 0
+        for: 5m
+        labels:
+          severity: critical
+          component: security
+        annotations:
+          summary: "SSL certificate has expired"
+          description: "SSL certificate for {{ $labels.instance }} has expired"

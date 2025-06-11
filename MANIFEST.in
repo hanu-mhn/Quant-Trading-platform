@@ -1,0 +1,50 @@
+# Manifest file for Quantitative Trading Platform
+# Copyright © 2025 [Your Name]. All rights reserved.
+
+include README.md
+include LICENSE
+include CONTRIBUTORS.md
+include CONTACT.md
+include ABOUT.md
+include requirements*.txt
+include *.md
+include *.yml
+include *.yaml
+
+# Configuration files
+recursive-include src/config *.yaml *.yml *.json
+recursive-include .streamlit *.toml
+
+# Documentation
+recursive-include docs *.md *.rst *.txt
+recursive-include examples *.py *.ipynb *.md
+
+# Scripts
+recursive-include scripts *.py *.sql *.sh
+
+# Docker and deployment
+include Dockerfile*
+include docker-compose*.yml
+include .dockerignore
+
+# GitHub workflows
+recursive-include .github *.yml *.yaml *.md
+
+# Exclude cache and temp files
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.so
+global-exclude .DS_Store
+global-exclude .git*
+global-exclude *.log
+global-exclude .env*
+global-exclude secrets/*
+
+# Include test files
+recursive-include tests *.py
+
+# Include monitoring configs
+recursive-include monitoring *.yml *.yaml *.json *.ini
+
+# Include nginx config
+recursive-include nginx *.conf

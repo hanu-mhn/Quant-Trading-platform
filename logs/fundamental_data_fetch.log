@@ -1,0 +1,55 @@
+2025-06-10 23:53:40,181 - INFO - Initializing Fundamental Data Source...
+2025-06-10 23:53:42,295 - INFO - Running in TEST MODE - fetching first 10 companies only
+2025-06-10 23:53:43,105 - INFO - Loaded 2101 main equity tickers
+2025-06-10 23:53:43,286 - INFO - Loaded 460 SME tickers
+2025-06-10 23:53:43,289 - INFO - Testing 1/10: 20MICRONS
+2025-06-10 23:53:43,413 - WARNING - Error fetching data for 20MICRONS: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=20MICRONS
+2025-06-10 23:53:43,920 - INFO - Testing 2/10: 21STCENMGM
+2025-06-10 23:53:44,027 - WARNING - Error fetching data for 21STCENMGM: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=21STCENMGM
+2025-06-10 23:53:44,530 - INFO - Testing 3/10: 360ONE
+2025-06-10 23:53:44,650 - WARNING - Error fetching data for 360ONE: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=360ONE
+2025-06-10 23:53:45,151 - INFO - Testing 4/10: 3IINFOLTD
+2025-06-10 23:53:45,249 - WARNING - Error fetching data for 3IINFOLTD: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=3IINFOLTD
+2025-06-10 23:53:45,751 - INFO - Testing 5/10: 3MINDIA
+2025-06-10 23:53:45,833 - WARNING - Error fetching data for 3MINDIA: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=3MINDIA
+2025-06-10 23:53:46,334 - INFO - Testing 6/10: 3PLAND
+2025-06-10 23:53:46,491 - WARNING - Error fetching data for 3PLAND: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=3PLAND
+2025-06-10 23:53:46,993 - INFO - Testing 7/10: 5PAISA
+2025-06-10 23:53:47,101 - WARNING - Error fetching data for 5PAISA: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=5PAISA
+2025-06-10 23:53:47,604 - INFO - Testing 8/10: 63MOONS
+2025-06-10 23:53:47,815 - WARNING - Error fetching data for 63MOONS: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=63MOONS
+2025-06-10 23:53:48,316 - INFO - Testing 9/10: A2ZINFRA
+2025-06-10 23:53:48,480 - WARNING - Error fetching data for A2ZINFRA: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=A2ZINFRA
+2025-06-10 23:53:48,981 - INFO - Testing 10/10: AAATECH
+2025-06-10 23:53:49,081 - WARNING - Error fetching data for AAATECH: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=AAATECH
+2025-06-10 23:53:49,588 - INFO - Saved fundamental data for 0 companies to d:\QUANT\QT_python\quant-trading-platform\src\data\fundamental_data_test.csv
+2025-06-10 23:53:49,594 - INFO - Test completed. Data saved to d:\QUANT\QT_python\quant-trading-platform\src\data\fundamental_data_test.csv
+2025-06-10 23:53:49,602 - ERROR - Error in main execution: "None of [Index(['symbol', 'company_name', 'last_price', 'market_cap', 'pe_ratio'], dtype='object')] are in the [columns]"
+2025-06-10 23:55:14,154 - INFO - Initializing Fundamental Data Source...
+2025-06-10 23:55:18,156 - INFO - NSE session initialized successfully
+2025-06-10 23:55:18,157 - INFO - Running in TEST MODE - fetching first 10 companies only
+2025-06-10 23:55:18,646 - INFO - Loaded 2101 main equity tickers
+2025-06-10 23:55:18,767 - INFO - Loaded 460 SME tickers
+2025-06-10 23:55:18,773 - INFO - Testing 1/10: 20MICRONS
+2025-06-10 23:55:19,397 - WARNING - Error fetching data for 20MICRONS: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:20,399 - INFO - Testing 2/10: 21STCENMGM
+2025-06-10 23:55:20,942 - WARNING - Error fetching data for 21STCENMGM: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:21,943 - INFO - Testing 3/10: 360ONE
+2025-06-10 23:55:22,504 - WARNING - Error fetching data for 360ONE: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:23,505 - INFO - Testing 4/10: 3IINFOLTD
+2025-06-10 23:55:24,316 - WARNING - Error fetching data for 3IINFOLTD: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:25,321 - INFO - Testing 5/10: 3MINDIA
+2025-06-10 23:55:25,854 - WARNING - Error fetching data for 3MINDIA: Extra data: line 1 column 2 (char 1)
+2025-06-10 23:55:26,855 - INFO - Testing 6/10: 3PLAND
+2025-06-10 23:55:27,764 - WARNING - Error fetching data for 3PLAND: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:28,770 - INFO - Testing 7/10: 5PAISA
+2025-06-10 23:55:29,353 - WARNING - Error fetching data for 5PAISA: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:30,354 - INFO - Testing 8/10: 63MOONS
+2025-06-10 23:55:30,992 - WARNING - Error fetching data for 63MOONS: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:31,993 - INFO - Testing 9/10: A2ZINFRA
+2025-06-10 23:55:32,622 - WARNING - Error fetching data for A2ZINFRA: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:33,623 - INFO - Testing 10/10: AAATECH
+2025-06-10 23:55:34,219 - WARNING - Error fetching data for AAATECH: Expecting value: line 1 column 1 (char 0)
+2025-06-10 23:55:35,225 - INFO - Saved fundamental data for 0 companies to d:\QUANT\QT_python\quant-trading-platform\src\data\fundamental_data_test.csv
+2025-06-10 23:55:35,226 - INFO - Test completed. Data saved to d:\QUANT\QT_python\quant-trading-platform\src\data\fundamental_data_test.csv
+2025-06-10 23:55:35,233 - ERROR - Error in main execution: "None of [Index(['symbol', 'company_name', 'last_price', 'market_cap', 'pe_ratio'], dtype='object')] are in the [columns]"

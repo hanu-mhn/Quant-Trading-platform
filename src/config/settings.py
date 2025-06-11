@@ -1,0 +1,10 @@
+API_KEY = "your_api_key_here"
+API_SECRET = "your_api_secret_here"
+BASE_URL = "https://api.yourbroker.com"
+TRADING_PAIR = "BTC/USD"
+TIMEFRAME = "1h"
+MAX_POSITION_SIZE = 1.0
+LEVERAGE = 2
+SLIPPAGE = 0.01
+BACKTEST_START_DATE = "2022-01-01"
+BACKTEST_END_DATE = "2022-12-31"
