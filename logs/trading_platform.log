@@ -92,3 +92,6 @@
 2025-06-11 13:05:12 | root | INFO | api_server.py:142 | API server initialized successfully
 2025-06-11 13:07:03 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
 2025-06-11 13:07:03 | root | INFO | api_server.py:142 | API server initialized successfully
+2025-06-11 21:43:04 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 21:43:39 | src.utils.logging_system | INFO | logging_system.py:439 | Logging system initialized
+2025-06-11 21:43:39 | root | INFO | api_server.py:142 | API server initialized successfully

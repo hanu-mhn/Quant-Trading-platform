@@ -97,7 +97,8 @@ class IBWrapper(EWrapper):
         self.logger.error(f"IB Error {errorCode}: {errorString} (ReqId: {reqId})")
         self.broker.last_error = {'code': errorCode, 'message': errorString, 'reqId': reqId}
     
-    def connectAck(self):        """Connection acknowledgment"""
+    def connectAck(self):
+        """Connection acknowledgment"""
         self.logger.info("IB Connection acknowledged")
         self.broker.is_connected = True
     

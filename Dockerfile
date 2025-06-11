@@ -1,4 +1,7 @@
-FROM python:3.9-slim-bookworm
+FROM python:3.9.18-slim-bookworm
+
+# Upgrade system packages to address vulnerabilities
+RUN apt-get update && apt-get upgrade -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
