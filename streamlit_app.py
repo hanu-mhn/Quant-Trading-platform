@@ -34,7 +34,8 @@ except ImportError as e:
     
     # Fallback basic demo
     st.title("🚀 Quantitative Trading Platform")
-    st.success("✅ Streamlit deployment successful!")    st.info("This is a basic fallback. The full demo should load above.")
+    st.success("✅ Streamlit deployment successful!")
+    st.info("This is a basic fallback. The full demo should load above.")
     
     # Show basic metrics
     col1, col2, col3 = st.columns(3)
