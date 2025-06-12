@@ -1,34 +1,35 @@
 version: '3.8'
 
 # Quantitative Trading Platform - Docker Compose Configuration
-# Copyright © 2025 [Your Name]. All rights reserved.
-# Developer: [Your Name] | Contact: [your.email@domain.com]
-# GitHub: https://github.com/your-github-username/quant-trading-platform
+# Developed by: Malavath Hanmanth Nayak
+# Contact: hanmanthnayak.95@gmail.com
+# LinkedIn: https://www.linkedin.com/in/hanmanth-nayak-m-6bbab1263/
 
 services:
-  # PostgreSQL Database for production data storage
-  database:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: trading_platform
-      POSTGRES_USER: trader
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-trading_secret}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+  # Main Trading Platform Application
+  trading-platform:
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
-    networks:
-      - trading_network
+      - "8501:8501"  # Streamlit Dashboard
+      - "8000:8000"  # FastAPI (optional)
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U trader -d trading_platform"]
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
 
-  # Redis for caching and message queuing
-  redis:
-    image: redis:7-alpine
+networks:
+  default:
+    name: quant-trading-network
     ports:
       - "6379:6379"
     volumes:
