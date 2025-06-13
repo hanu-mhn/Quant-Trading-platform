@@ -1,0 +1,321 @@
+name: Trading Platform CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Code Quality and Testing
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: trading_platform_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-asyncio black flake8 mypy
+
+    - name: Code formatting check
+      run: |
+        black --check --diff src/ tests/
+
+    - name: Lint with flake8
+      run: |
+        flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Type checking with mypy
+      run: |
+        mypy src/ --ignore-missing-imports
+        
+    - name: Run tests with coverage
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/trading_platform_test
+        REDIS_URL: redis://localhost:6379/0
+        PYTHONPATH: ${{ github.workspace }}
+      run: |
+        python -c "import sys; print(sys.path)"
+        echo "Current directory: $(pwd)"
+        echo "File structure:"
+        ls -la
+        echo "Testing directory structure:"
+        ls -la tests/
+        echo "Running tests with verbose output:"
+        pytest tests/ -v --tb=native --cov=src --cov-report=xml --cov-report=html
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  # Security Scanning
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install security tools
+      run: |
+        pip install bandit safety
+        
+    - name: Run Bandit security scan
+      run: |
+        echo "Running Bandit security scan with configuration"
+        bandit -r src/ -f json -o bandit-report.json -c .bandit.yaml || true
+        
+        # Echo the report content
+        echo "Bandit report content:"
+        cat bandit-report.json || echo "No report generated"
+
+    - name: Run Safety check
+      run: |
+        echo "Running Safety check"
+        safety check --json --output safety-report.json || true
+        
+        # Echo the report content 
+        echo "Safety report content:"
+        cat safety-report.json || echo "No report generated"
+
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  # Docker Build and Push
+  build:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.DOCKER_REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=sha,format=long,prefix=
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push Dashboard image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.dashboard
+        push: true
+        tags: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}-dashboard:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # Integration Tests
+  integration:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Pull Docker images
+      run: |
+        docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}-dashboard:${{ github.sha }}
+
+    - name: Run integration tests
+      run: |
+        docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+
+  # Deployment to Staging
+  deploy-staging:
+    needs: [build, integration]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment"
+        # This could be kubectl, docker-compose, or other deployment tools
+  
+  # Deployment to Production
+  deploy-production:
+    needs: [build, integration]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Deploy using SSH
+    - name: Deploy to production server
+      run: |
+        echo "Setting up deployment..."
+        
+        # Create SSH key files
+        mkdir -p ~/.ssh
+        echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        
+        # Add host to known hosts
+        echo "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+        
+        # Deploy files
+        scp docker-compose.production.yml $DEPLOY_USER@$DEPLOY_HOST:/opt/trading-platform/
+        scp deploy.sh $DEPLOY_USER@$DEPLOY_HOST:/opt/trading-platform/
+        
+        # Run deployment
+        ssh $DEPLOY_USER@$DEPLOY_HOST "cd /opt/trading-platform && \
+          chmod +x deploy.sh && \
+          TAG=${{ github.sha }} \
+          DB_PASSWORD=$DB_PASSWORD \
+          REDIS_PASSWORD=$REDIS_PASSWORD \
+          JWT_SECRET_KEY=$JWT_SECRET_KEY \
+          API_SECRET_KEY=$API_SECRET_KEY \
+          ./deploy.sh"
+        
+        # Clean up
+        rm -f ~/.ssh/id_rsa
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+        DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+
+    - name: Verify deployment
+      run: |
+        echo "Verifying deployment..."
+        sleep 30
+        curl -s -o /dev/null -w "%{http_code}" https://$DEPLOY_HOST | grep 200
+      env:
+        DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+
+  # Documentation Build
+  docs:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install documentation dependencies
+      run: |
+        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+        
+    - name: Build documentation
+      run: |
+        echo "Setting up directories"
+        mkdir -p docs/_static docs/_templates docs/_build
+        
+        echo "Files in docs directory:"
+        ls -la docs/
+        
+        echo "Building documentation"
+        cd docs
+        make html
+        
+    - name: Deploy documentation to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/_build/html

@@ -1,0 +1,86 @@
+version: '3.8'
+
+# Integration testing configuration for Quantitative Trading Platform
+# Used in CI/CD pipeline for automated testing
+
+services:
+  trading_app_test:
+    image: ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GITHUB_SHA}
+    environment:
+      - ENVIRONMENT=test
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/trading_platform_test
+      - LOG_LEVEL=DEBUG
+      - TESTING=true
+      - JWT_SECRET_KEY=test_jwt_key
+      - API_SECRET_KEY=test_api_key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - test_network
+
+  dashboard_test:
+    image: ${DOCKER_REGISTRY}/${IMAGE_NAME}-dashboard:${GITHUB_SHA}
+    environment:
+      - ENVIRONMENT=test
+      - TRADING_API_URL=http://trading_app_test:8000
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_HEADLESS=true
+      - PYTHONPATH=/app
+    depends_on:
+      - trading_app_test
+    networks:
+      - test_network
+
+  integration_tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - API_URL=http://trading_app_test:8000
+      - DASHBOARD_URL=http://dashboard_test:8501
+      - PYTHONPATH=/app
+    volumes:
+      - ./tests:/app/tests
+    depends_on:
+      - trading_app_test
+      - dashboard_test
+    networks:
+      - test_network
+    # Run integration tests and exit
+    command: >
+      bash -c "
+        echo 'Waiting for services to be ready...' &&
+        sleep 10 &&
+        pytest tests/integration -v
+      "
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=trading_platform_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_network
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_network
+
+networks:
+  test_network:
+    driver: bridge
