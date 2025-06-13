@@ -1,52 +1,21 @@
-# Quantitative Trading Platform Requirements
-# Docker-optimized for Python 3.11
-
-# ====== CORE DATA ANALYSIS ======
-numpy==1.24.3
-pandas==2.0.3
-scipy==1.11.1
-
-# ====== TECHNICAL ANALYSIS ======
-ta==0.10.2
-
-# ====== VISUALIZATION ======
-matplotlib==3.7.2
-seaborn==0.12.2
-plotly==5.15.0
-
-# ====== WEB DASHBOARD ======
-streamlit==1.25.0
-
-# ====== API FRAMEWORK ======
-fastapi==0.101.1
-uvicorn==0.23.2
-
-# ====== MACHINE LEARNING ======
-scikit-learn==1.3.0
-
-# ====== DATA SOURCES ======
-requests==2.31.0
-yfinance==0.2.18
-
-# ====== DATABASE AND STORAGE ======
-sqlalchemy==2.0.19
-
-# ====== CONFIGURATION ======
-pyyaml==6.0.1
-python-dotenv==1.0.0
-pydantic==2.1.1
-
-# ====== ASYNC SUPPORT ======
-aiohttp==3.8.5
-websockets==11.0.3
-
-# ====== LOGGING ======
-loguru==0.7.0
-
-# ====== DATE HANDLING ======
-python-dateutil==2.8.2
-pytz==2023.3
-
-# ====== UTILITIES ======
-tqdm==4.65.0
-click==8.1.6
+# Streamlit Cloud Compatible Requirements
+# Only pure Python and pip-installable packages
+streamlit>=1.28.0
+pandas>=2.0.0
+numpy>=1.24.0
+plotly>=5.15.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+requests>=2.31.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+# sqlite3 is included with Python, do not list in requirements
+pyyaml>=6.0.1
+python-dotenv>=1.0.0
+python-dateutil>=2.8.0
+pytz>=2023.3
+pathlib2>=2.3.7
+yfinance>=0.2.0
+ta>=0.10.0

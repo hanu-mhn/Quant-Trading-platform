@@ -55,7 +55,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data
+# Check if cache_data is available, else use cache
+try:
+    cache_decorator = st.cache_data
+except AttributeError:
+    # Fallback for older Streamlit versions
+    cache_decorator = st.cache
+
+@cache_decorator
 def generate_sample_data():
     """Generate sample trading data for demo"""
     np.random.seed(42)
@@ -76,7 +83,7 @@ def generate_sample_data():
     
     return portfolio_data
 
-@st.cache_data  
+@cache_decorator  
 def get_sample_positions():
     """Generate sample positions data"""
     positions = [

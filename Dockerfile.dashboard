@@ -1,0 +1,21 @@
+# Streamlit Dashboard Dockerfile (hardened)
+FROM python:3.11-slim-bullseye
+
+# Install only necessary build tools, then remove them in the same layer
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y gcc \
+    && apt-get purge -y --auto-remove gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user
+RUN useradd -m appuser
+USER appuser
+
+WORKDIR /app
+
+COPY requirements_streamlit.txt ./
+RUN pip install --no-cache-dir -r requirements_streamlit.txt
+
+COPY . .
+
+CMD ["python3", "-m", "streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]

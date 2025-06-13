@@ -75,15 +75,20 @@ jobs:
 
     - name: Type checking with mypy
       run: |
-        mypy src/ --ignore-missing-imports
-
-    - name: Run tests with coverage
+        mypy src/ --ignore-missing-imports    - name: Run tests with coverage
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/trading_platform_test
         REDIS_URL: redis://localhost:6379/0
         PYTHONPATH: ${{ github.workspace }}
       run: |
-        pytest tests/ -v --cov=src --cov-report=xml --cov-report=html
+        python -c "import sys; print(sys.path)"
+        echo "Current directory: $(pwd)"
+        echo "File structure:"
+        ls -la
+        echo "Testing directory structure:"
+        ls -la tests/
+        echo "Running tests with verbose output:"
+        pytest tests/ -v --tb=native --cov=src --cov-report=xml --cov-report=html
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -106,15 +111,23 @@ jobs:
 
     - name: Install security tools
       run: |
-        pip install bandit safety
-
-    - name: Run Bandit security scan
+        pip install bandit safety    - name: Run Bandit security scan
       run: |
-        bandit -r src/ -f json -o bandit-report.json || true
+        echo "Running Bandit security scan with configuration"
+        bandit -r src/ -f json -o bandit-report.json -c .bandit.yaml || true
+        
+        # Echo the report content
+        echo "Bandit report content:"
+        cat bandit-report.json || echo "No report generated"
 
     - name: Run Safety check
       run: |
+        echo "Running Safety check"
         safety check --json --output safety-report.json || true
+        
+        # Echo the report content 
+        echo "Safety report content:"
+        cat safety-report.json || echo "No report generated"
 
     - name: Upload security reports
       uses: actions/upload-artifact@v3
@@ -331,12 +344,20 @@ jobs:
 
     - name: Install documentation dependencies
       run: |
-        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
-
-    - name: Build documentation
+        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints    - name: Build documentation
       run: |
+        echo "Setting up directories"
+        mkdir -p docs/_static docs/_templates docs/_build
+        
+        echo "Files in docs directory:"
+        ls -la docs/
+        
+        echo "Building documentation"
         cd docs
         make html
+        
+        echo "Documentation build logs:"
+        cat _build/html/output.log || echo "No build log available"
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3

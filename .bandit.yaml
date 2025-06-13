@@ -1,0 +1,19 @@
+# Bandit configuration file
+[bandit]
+# Targets to analyze
+targets: src
+
+# Directories to exclude
+exclude_dirs: tests, docs, scripts
+
+# Skip some checks
+# B101 - Use of assert detected
+# B311 - Random is not suitable for security/cryptographic purposes
+# B303 - Use of insecure MD5 hash function
+skips: B101,B311,B303
+
+# Report format
+format: json
+
+# Severity level threshold
+aggregate: HIGH

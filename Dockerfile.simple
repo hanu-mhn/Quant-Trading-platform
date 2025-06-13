@@ -1,0 +1,16 @@
+FROM python:3.11-slim-bullseye
+
+# Install only necessary build tools, then remove them in the same layer
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y gcc \
+    && apt-get purge -y --auto-remove gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user
+RUN useradd -m appuser
+USER appuser
+
+WORKDIR /app
+
+# Default command (update as needed for your app)
+CMD ["python3"]

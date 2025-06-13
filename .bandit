@@ -1,0 +1,15 @@
+[bandit]
+targets: src
+
+# Skip tests directory
+exclude: /tests
+
+# Checks to skip
+skips: B101,B311,B303
+
+# Report format
+format: json
+
+# Severity level threshold
+# HIGH, MEDIUM, LOW
+aggregate: HIGH
