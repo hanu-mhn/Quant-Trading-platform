@@ -5,6 +5,8 @@ Quick Start Script - Get Trading in 60 Seconds!
 
 import subprocess
 import time
+
+
 import webbrowser
 from pathlib import Path
 import sys

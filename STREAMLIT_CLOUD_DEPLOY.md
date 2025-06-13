@@ -10,10 +10,12 @@ This platform is now ready for deployment on Streamlit Community Cloud!
 - Click "New app"
 - Connect your GitHub repository: `https://github.com/hanu-mhn/quant-trading-platform`
 - Main file path: `streamlit_app.py`
+- Branch: `main` (or your preferred branch)
+- Python version: 3.10
 - Click "Deploy!"
 
 ### 2. **Requirements File**
-The platform uses `requirements-streamlit.txt` which contains only essential packages for cloud deployment.
+The platform uses `requirements-streamlit.txt` which contains only essential packages for cloud deployment. Make sure to specify this file in the deployment settings.
 
 ### 3. **Configuration**
 - **App Name**: Quantitative Trading Platform

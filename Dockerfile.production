@@ -1,0 +1,43 @@
+# Production-optimized Dockerfile for Quant Trading Platform
+FROM python:3.11-slim-bullseye
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+# Install only necessary system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    curl \
+    libopenblas-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd -r quantuser && useradd -r -g quantuser quantuser
+
+# Copy only the requirements first to leverage Docker cache
+COPY requirements.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy only the necessary application files
+COPY src ./src
+COPY streamlit_app.py ./
+COPY setup.py ./
+
+# Change ownership to non-root user
+RUN chown -R quantuser:quantuser /app
+
+# Switch to non-root user
+USER quantuser
+
+# Expose ports for API and Streamlit
+EXPOSE 8000 8501
+
+# Default command
+CMD ["python", "-m", "streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]

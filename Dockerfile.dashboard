@@ -13,8 +13,8 @@ USER appuser
 
 WORKDIR /app
 
-COPY requirements_streamlit.txt ./
-RUN pip install --no-cache-dir -r requirements_streamlit.txt
+COPY requirements-streamlit.txt ./
+RUN pip install --no-cache-dir -r requirements-streamlit.txt --extra-index-url https://pypi.org/simple/
 
 COPY . .
 

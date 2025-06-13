@@ -1,24 +1,14 @@
 import unittest
 import os
 import sys
-import inspect
 
-# Print debugging information
-print(f"Current directory: {os.getcwd()}")
-print(f"Python path: {sys.path}")
-
-# Add the project root to the Python path
+# Add the project root to the Python path (no print statements)
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
-    print(f"Added to path: {root_dir}")
 
-# Import the helper functions with debugging
-try:
-    from src.utils.helpers import calculate_moving_average, normalize_data, split_data
-    print("Successfully imported helper functions")
-except ImportError as e:
-    print(f"Import error: {e}")
+# Import the helper functions
+from src.utils.helpers import calculate_moving_average, normalize_data, split_data
 
 class TestUtils(unittest.TestCase):
 

@@ -217,7 +217,8 @@ jobs:
     needs: [build, integration]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
-    environment: staging
+    environment:
+      name: staging
     
     steps:
     - name: Checkout code
@@ -233,47 +234,55 @@ jobs:
     needs: [build, integration]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    environment: production
+    environment:
+      name: production
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Deploy using SSH
-    - name: Deploy to production server
-      run: |
-        echo "Setting up deployment..."
-        
-        # Create SSH key files
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        
-        # Add host to known hosts
-        echo "${{ secrets.KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
-        
-        # Deploy files
-        scp docker-compose.production.yml ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/trading-platform/
-        scp deploy.sh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/trading-platform/
-        
-        # Run deployment
-        ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "cd /opt/trading-platform && \
-          chmod +x deploy.sh && \
-          TAG=${{ github.sha }} \
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
-          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-          API_SECRET_KEY=${{ secrets.API_SECRET_KEY }} \
-          ./deploy.sh"
-        
-        # Clean up
-        rm -f ~/.ssh/id_rsa
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Verify deployment
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        name: id_rsa
+        config: |
+          Host production
+            HostName ${{ secrets.SERVER_IP }}
+            User ${{ secrets.SERVER_USER }}
+            IdentityFile ~/.ssh/id_rsa
+
+    - name: Deploy Docker Stack to Production
       run: |
-        echo "Verifying deployment..."
+        echo "Deploying to production..."
+        
+        # Transfer deployment files
+        scp docker-compose.production.yml production:/opt/trading-platform/
+        scp deploy.sh production:/opt/trading-platform/
+        
+        # Execute deployment script
+        ssh production "cd /opt/trading-platform && chmod +x deploy.sh && ./deploy.sh \
+          TAG=${{ github.sha }} \
+          DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
+          REDIS_PASSWORD=${{ secrets.PROD_REDIS_PASSWORD }} \
+          JWT_SECRET_KEY=${{ secrets.PROD_JWT_SECRET }} \
+          API_SECRET_KEY=${{ secrets.PROD_API_SECRET }}"
+        
+        echo "Deployment completed"
+
+    - name: Run Health Check
+      run: |
+        echo "Running health check on deployed application"
+        # Wait for services to be available
         sleep 30
-        curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.DEPLOY_HOST }} | grep 200
+        # Run health check against API endpoint
+        curl -f https://api.example.com/health || exit 1
 
   # Documentation Build
   docs:

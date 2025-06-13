@@ -33,9 +33,9 @@ else
     exit 1
 fi
 
-# Run with Docker Compose
-echo "🚀 Starting application with Docker Compose..."
-docker-compose up -d
+# Run with Docker Compose (Production)
+echo "🚀 Starting application with Docker Compose (Production)..."
+docker compose -f docker-compose.production.yml up -d
 
 if [ $? -eq 0 ]; then
     echo "✅ Application started successfully"
@@ -46,8 +46,9 @@ if [ $? -eq 0 ]; then
     echo "   LinkedIn: https://www.linkedin.com/in/hanmanth-nayak-m-6bbab1263/"
     echo "   Email: hanmanthnayak.95@gmail.com"
     echo ""
-    echo "📋 To stop the application: docker-compose down"
-    echo "📋 To view logs: docker-compose logs -f"
+    echo "📋 To stop the application: docker compose -f docker-compose.production.yml down"
+    echo "📋 To view logs: docker compose -f docker-compose.production.yml logs -f"
+    echo "📋 To check status: docker compose -f docker-compose.production.yml ps"
 else
     echo "❌ Failed to start application"
     exit 1

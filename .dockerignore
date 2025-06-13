@@ -1,22 +1,86 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*$py.class
+*.so
+
+# Data and databases
 *.db
 *.sqlite3
+data/
+!data/.gitkeep
+!data/external/.gitkeep
+!data/processed/.gitkeep
+!data/raw/.gitkeep
+
+# Logs and backups
 *.log
 *.tar.gz
-*.ipynb
-.DS_Store
-.env
-secrets/
 logs/
 backups/
+
+# Development and testing
+.env
 notebooks/
 tests/
+pytest.ini
+*.ipynb
+
+# Version control
 .git/
 .gitignore
+.github/
+
+# Docker files (except requirements files)
 .dockerignore
-*.md
 *.yml
 *.yaml
+!requirements*.txt
+!requirements-*.txt
+
+# Documentation
+*.md
+!README.md
+!DEPLOYMENT*.md
+!FINAL_DEPLOYMENT_GUIDE.md
+*.rst
+docs/
+docs/_build/
+
+# Secrets
+secrets/
+*.pem
+*.key
+*.crt
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.Python
+env/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+.installed.cfg
+*.egg
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+*.sublime-*
+*.swp
+*.swo
+
+# Virtual environments
+venv/
+ENV/
+env/

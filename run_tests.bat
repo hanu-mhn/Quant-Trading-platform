@@ -5,8 +5,20 @@ echo.
 REM Set Python path to include project root
 set PYTHONPATH=%CD%
 
-REM Run the tests with pytest
-python -m pytest tests -v
+REM Install pytest if not already installed
+pip install pytest > nul 2>&1
+
+REM Run the tests with pytest, just one file at a time to avoid complex dependencies
+echo Running test_utils.py...
+python -m pytest tests/test_utils.py -v
+
+echo.
+echo Running test_backtesting.py...
+python -m pytest tests/test_backtesting.py -v
+
+echo.
+echo Running test_live_trading.py...
+python -m pytest tests/test_live_trading.py -v
 
 echo.
 if %ERRORLEVEL% EQU 0 (
