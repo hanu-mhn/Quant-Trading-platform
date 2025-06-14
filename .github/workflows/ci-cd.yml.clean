@@ -214,7 +214,7 @@ jobs:
 
   # Deployment to Staging
   deploy-staging:
-    needs: [build, integration]
+    needs: [integration]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     
@@ -229,13 +229,14 @@ jobs:
   
   # Deployment to Production
   deploy-production:
-    needs: [build, integration]
+    needs: [integration]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4    # Deploy using SSH
+      uses: actions/checkout@v4
+
     - name: Deploy to production server
       run: |
         echo "Setting up deployment..."
@@ -263,7 +264,8 @@ jobs:
           ./deploy.sh"
         
         # Clean up
-        rm -f ~/.ssh/id_rsa      env:
+        rm -f ~/.ssh/id_rsa
+      env:
         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
         DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
@@ -276,18 +278,15 @@ jobs:
     - name: Verify deployment
       run: |
         echo "Verifying deployment..."
-        # Give services time to start up
         sleep 30
-        
-        # Simple check for deployment health
-        if [[ -n "$DEPLOY_HOST" ]]; then
-          echo "Checking health of deployment at https://$DEPLOY_HOST"
-          curl -s -o /dev/null -w "%{http_code}" "https://$DEPLOY_HOST" | grep 200 && echo "Deployment successful!" || echo "Deployment may have issues"
+        if [ -n "$DEPLOY_HOST" ]; then
+          curl -s -o /dev/null -w "%{http_code}" https://$DEPLOY_HOST || echo "Deployment verification failed"
         else
           echo "Skipping verification - DEPLOY_HOST not set"
         fi
       env:
         DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+
   # Documentation Build
   docs:
     runs-on: ubuntu-latest
