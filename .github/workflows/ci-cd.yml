@@ -1,4 +1,4 @@
-name: Trading Platform CI/CD
+ name: Trading Platform CI/CD
 
 on:
   push:
